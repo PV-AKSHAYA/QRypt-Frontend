@@ -1,10 +1,10 @@
 import React from 'react';
-import { 
-  ShieldCheck, 
-  ShieldAlert, 
-  ShieldX, 
-  AlertTriangle, 
-  Info 
+import {
+  ShieldCheck,
+  ShieldAlert,
+  ShieldX,
+  AlertTriangle,
+  Info
 } from 'lucide-react';
 import { cn } from '../ui/Button';
 
@@ -40,6 +40,14 @@ const verdictConfigs = {
     glow: 'shadow-[0_0_20px_rgba(249,115,22,0.2)]',
     icon: ShieldAlert,
     label: 'HIGH RISK'
+  },
+  SUSPICIOUS: {
+    color: 'text-warning',
+    bg: 'bg-warning/10',
+    border: 'border-warning/20',
+    glow: 'shadow-[0_0_20px_rgba(255,170,0,0.2)]',
+    icon: AlertTriangle,
+    label: 'SUSPICIOUS'
   },
   CRITICAL: {
     color: 'text-danger',

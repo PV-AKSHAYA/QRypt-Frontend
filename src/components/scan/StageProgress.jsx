@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  QrCode, 
-  ShieldAlert, 
-  Share2, 
-  Database, 
-  Fingerprint, 
-  CheckCircle2, 
-  Loader2 
+import React from 'react';
+import { motion } from 'framer-motion';
+import {
+  QrCode,
+  ShieldAlert,
+  Share2,
+  Database,
+  Fingerprint,
+  CheckCircle2,
+  Loader2
 } from 'lucide-react';
 import { cn } from '../ui/Button';
 
@@ -19,33 +19,22 @@ const STAGES = [
   { id: 5, text: "Running AI forensic analysis...", icon: ShieldAlert }
 ];
 
-const StageProgress = ({ onComplete }) => {
-  const [currentStage, setCurrentStage] = useState(0);
-
-  useEffect(() => {
-    if (currentStage < STAGES.length) {
-      const timer = setTimeout(() => {
-        setCurrentStage(prev => prev + 1);
-      }, 800);
-      return () => clearTimeout(timer);
-    } else {
-      const timer = setTimeout(() => {
-        onComplete();
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [currentStage, onComplete]);
-
+/**
+ * StageProgress — now controlled externally by the 'activeStage' prop (set by WebSocket).
+ */
+const StageProgress = ({ activeStage = 0 }) => {
   return (
     <div className="w-full max-w-md mx-auto space-y-6">
       {STAGES.map((stage, index) => {
-        const isCompleted = index < currentStage;
-        const isActive = index === currentStage;
-        const isPending = index > currentStage;
+        // activeStage is 1-indexed (matching backend)
+        const stageNum = index + 1;
+        const isCompleted = stageNum < activeStage || activeStage === 6;
+        const isActive = stageNum === activeStage;
+        const isPending = stageNum > activeStage && activeStage !== 6;
         const Icon = stage.icon;
 
         return (
-          <div 
+          <div
             key={stage.id}
             className={cn(
               "flex flex-col gap-2 transition-all duration-300",
@@ -56,8 +45,8 @@ const StageProgress = ({ onComplete }) => {
               <div className="flex items-center gap-4">
                 <div className={cn(
                   "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
-                  isCompleted ? "bg-success/20 text-success" : 
-                  isActive ? "bg-primary/20 text-primary" : "bg-white/5 text-text-secondary"
+                  isCompleted ? "bg-success/20 text-success" :
+                    isActive ? "bg-primary/20 text-primary" : "bg-white/5 text-text-secondary"
                 )}>
                   {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
                 </div>
@@ -68,12 +57,12 @@ const StageProgress = ({ onComplete }) => {
                   {stage.text}
                 </span>
               </div>
-              
+
               {isActive && (
                 <Loader2 className="w-4 h-4 text-primary animate-spin" />
               )}
             </div>
-            
+
             <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
               <motion.div
                 className={cn(
@@ -82,9 +71,9 @@ const StageProgress = ({ onComplete }) => {
                 )}
                 initial={{ width: 0 }}
                 animate={{ width: isCompleted ? "100%" : isActive ? "70%" : "0%" }}
-                transition={{ 
-                  duration: isCompleted ? 0.3 : 0.8,
-                  ease: isActive ? "linear" : "easeOut"
+                transition={{
+                  duration: 0.5,
+                  ease: "easeOut"
                 }}
               />
             </div>
